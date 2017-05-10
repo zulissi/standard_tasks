@@ -44,6 +44,11 @@ def runVasp(fname_in,fname_out,vaspflags,npar=4):
             vaspflags['KPAR']=NNODES
         elif os.environ['CRAY_CPU_TARGET']=='knl':
             vaspflags['NCORE']=1
+    
+    if 'xc' in vaspflags and vaspflags['xc']=='rpbe':
+        del vaspflags['xc']
+        vaspflags['gga']=['RP']
+        vaspflags['pp']='PBE'
 
     pseudopotential=vaspflags['pp_version']
     os.environ['VASP_PP_PATH']=os.environ['VASP_PP_BASE']+'/'+str(pseudopotential)+'/'
