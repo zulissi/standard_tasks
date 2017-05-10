@@ -40,13 +40,12 @@ def runVasp(fname_in,fname_out,vaspflags,npar=4):
         elif os.environ['CRAY_CPU_TARGET']=='knl':
             vaspflags['NCORE']=1
 
-    #John's vasp code guesses LDA pseudopotentials for rpbe, but PBE
-    #is probably a more reasonable choice
-    if 'xc' in vaspflags and vaspflags['xc']=='rpbe':
-        del vaspflags['xc']
-        vaspflags['gga']=['RP']
-        vaspflags['pp']='PBE'
-
+    #Set the pseudopotential type by setting 'xc' in Vasp() 
+    if 'gga' not in vaspflags:
+        vaspflags['xc']='lda'
+    elif vaspflags['gga'] in ['RP','BF','PE']:
+        vaspflags['xc']='pbe'
+        
     pseudopotential=vaspflags['pp_version']
     os.environ['VASP_PP_PATH']=os.environ['VASP_PP_BASE']+'/'+str(pseudopotential)+'/'
 
