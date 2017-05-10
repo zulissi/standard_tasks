@@ -13,14 +13,9 @@ def runVasp(fname_in,fname_out,vaspflags,npar=4):
     
     #update vasprc file to set mode to "run" to ensure that this runs immediately
     Vasp.vasprc(mode='run')
+
     #set ppn>1 so that it knows to do an mpi job, the actual ppn will guessed by Vasp module
     Vasp.VASPRC['queue.ppn']=2
-    #if vaspflags['xc']=='beef-vdw':
-        #if we're doing PBE, we're probably on a KNL node
-        #vaspflags['NCORE']=1
-    #else:
-    #    NNODES=int(os.environ['SLURM_NNODES'])
-    #    vaspflags['KPAR']=NNODES
 
     if 'PBS_SERVER' in os.environ and os.environ['PBS_SERVER']=='gilgamesh.cheme.cmu.edu':
         #We're on gilgamesh
@@ -44,7 +39,9 @@ def runVasp(fname_in,fname_out,vaspflags,npar=4):
             vaspflags['KPAR']=NNODES
         elif os.environ['CRAY_CPU_TARGET']=='knl':
             vaspflags['NCORE']=1
-    
+
+    #John's vasp code guesses LDA pseudopotentials for rpbe, but PBE
+    #is probably a more reasonable choice
     if 'xc' in vaspflags and vaspflags['xc']=='rpbe':
         del vaspflags['xc']
         vaspflags['gga']=['RP']
