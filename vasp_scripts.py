@@ -41,10 +41,15 @@ def runVasp(fname_in,fname_out,vaspflags,npar=4):
             vaspflags['NCORE']=1
 
     #Set the pseudopotential type by setting 'xc' in Vasp() 
-    if 'gga' not in vaspflags:
+    if vaspflags['pp'].lower()=='lda':
         vaspflags['xc']='lda'
-    elif vaspflags['gga'] in ['RP','BF','PE']:
-        vaspflags['xc']='pbe'
+    elif vaspflags['pp'].lower()=='pbe':
+        vaspflags['xc']='PBE'
+ 
+    #if 'gga' not in vaspflags:
+    #    vaspflags['xc']='lda'
+    #elif vaspflags['gga'] in ['RP','BF','PE']:
+    #    vaspflags['xc']='pbe'
         
     pseudopotential=vaspflags['pp_version']
     os.environ['VASP_PP_PATH']=os.environ['VASP_PP_BASE']+'/'+str(pseudopotential)+'/'
